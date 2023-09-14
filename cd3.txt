@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .screen {
+            grid-column: span 4;
+            text-align: right;
+            font-size: 24px;
+            padding: 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button {
+            font-size: 20px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="screen" id="display">0</div>
+        <div class="button" id="clear">C</div>
+        <div class="button" id="divide">/</div>
+        <div class="button" id="multiply">*</div>
+        <div class="button" id="seven">7</div>
+        <div class="button" id="eight">8</div>
+        <div class="button" id="nine">9</div>
+        <div class="button" id="subtract">-</div>
+        <div class="button" id="four">4</div>
+        <div class="button" id="five">5</div>
+        <div class="button" id="six">6</div>
+        <div class="button" id="add">+</div>
+        <div class="button" id="one">1</div>
+        <div class="button" id="two">2</div>
+        <div class="button" id="three">3</div>
+        <div class="button" id="equals">=</div>
+        <div class="button" id="zero">0</div>
+        <div class="button" id="decimal">.</div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = null;
+        let awaitingNextInput = false;
+
+        const updateDisplay = () => {
+            display.textContent = currentInput;
+        };
+
+        const inputDigit = (digit) => {
+            if (awaitingNextInput) {
+                currentInput = digit;
+                awaitingNextInput = false;
+            } else {
+                currentInput += digit;
+            }
+            updateDisplay();
+        };
+
+        const inputDecimal = () => {
+            if (awaitingNextInput) {
+                currentInput = '0.';
+                awaitingNextInput = false;
+            } else {
+                if (currentInput.indexOf('.') === -1) {
+                    currentInput += '.';
+                }
+            }
+            updateDisplay();
+        };
+
+        const handleOperator = (nextOperator) => {
+            const inputValue = parseFloat(currentInput);
+
+            if (firstOperand === null) {
+                firstOperand = inputValue;
+            } else if (operator) {
+                const result = performCalculation[operator](firstOperand, inputValue);
+                currentInput = String(result);
+                firstOperand = result;
+            }
+
+            awaitingNextInput = true;
+            operator = nextOperator;
+            updateDisplay();
+        };
+
+        const performCalculation = {
+            '+': (x, y) => x + y,
+            '-': (x, y) => x - y,
+            '*': (x, y) => x * y,
+            '/': (x, y) => x / y,
+            '=': (x, y) => y,
+        };
+
+        const resetCalculator = () => {
+            currentInput = '0';
+            operator = '';
+            firstOperand = null;
+            awaitingNextInput = false;
+            updateDisplay();
+        };
+
+        document.getElementById('clear').addEventListener('click', resetCalculator);
+        document.getElementById('zero').addEventListener('click', () => inputDigit('0'));
+        document.getElementById('one').addEventListener('click', () => inputDigit('1'));
+        document.getElementById('two').addEventListener('click', () => inputDigit('2'));
+        document.getElementById('three').addEventListener('click', () => inputDigit('3'));
+        document.getElementById('four').addEventListener('click', () => inputDigit('4'));
+        document.getElementById('five').addEventListener('click', () => inputDigit('5'));
+        document.getElementById('six').addEventListener('click', () => inputDigit('6'));
+        document.getElementById('seven').addEventListener('click', () => inputDigit('7'));
+        document.getElementById('eight').addEventListener('click', () => inputDigit('8'));
+        document.getElementById('nine').addEventListener('click', () => inputDigit('9'));
+        document.getElementById('decimal').addEventListener('click', inputDecimal);
+        document.getElementById('add').addEventListener('click', () => handleOperator('+'));
+        document.getElementById('subtract').addEventListener('click', () => handleOperator('-'));
+        document.getElementById('multiply').addEventListener('click', () => handleOperator('*'));
+        document.getElementById('divide').addEventListener('click', () => handleOperator('/'));
+        document.getElementById('equals').addEventListener('click', () => handleOperator('='));
+    </script>
+</body>
+</html>
